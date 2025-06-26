@@ -53,6 +53,16 @@ export function ExpenseForm({ onSubmit }: ExpenseFormProps) {
     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">🎯 Configure Your Hedge</h2>
       
+      {/* Workflow Reminder */}
+      <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg border border-blue-200 dark:border-blue-800 mb-6">
+        <h3 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">💡 Quick Workflow Reminder</h3>
+        <div className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+          <p>1. Fill in all the required fields below</p>
+          <p>2. Click &quot;Optimize for Risk Protection&quot; to find ideal settings</p>
+          <p>3. Review and click &quot;Simulate Hedging&quot; to see results</p>
+        </div>
+      </div>
+      
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Expense Name */}
         <div>
@@ -238,44 +248,60 @@ export function ExpenseForm({ onSubmit }: ExpenseFormProps) {
           </p>
         </div>
 
-        {/* Optimize Button */}
-        <button
-          type="button"
-          onClick={async () => {
-            const baselineExpense = watch('baselineExpense');
-            const adverseExpense = watch('adverseExpense');
-            const yesPrice = watch('yesPrice');
-            const monthsToHedge = watch('monthsToHedge');
-            const feeRate = watch('feeRate');
+        {/* Action Buttons Section with Workflow */}
+        <div className="space-y-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 text-center">📋 Action Steps</h3>
+          
+          {/* Step 1: Optimize Button */}
+          <div className="bg-green-50 dark:bg-green-950 p-4 rounded-lg border border-green-200 dark:border-green-800">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 mr-2">
+                  STEP 1
+                </span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">Find Optimal Settings</span>
+              </div>
+              <div className="text-green-600 dark:text-green-400 text-sm">Recommended</div>
+            </div>
             
-            if (!baselineExpense || !adverseExpense || !yesPrice || !monthsToHedge || feeRate === undefined) {
-              alert('Please fill in all required fields first');
-              return;
-            }
-            
-            if (adverseExpense <= baselineExpense) {
-              alert('Adverse expense must be higher than baseline expense');
-              return;
-            }
-            
-            setIsOptimizing(true);
-            
-            // Use setTimeout to allow UI to update
-            setTimeout(() => {
-              try {
-                const optimal = findOptimalHedgeRatio(
-                  baselineExpense,
-                  adverseExpense,
-                  yesPrice,
-                  monthsToHedge,
-                  feeRate / 100 // Convert percentage to decimal
-                );
+            {/* Optimize Button */}
+            <button
+              type="button"
+              onClick={async () => {
+                const baselineExpense = watch('baselineExpense');
+                const adverseExpense = watch('adverseExpense');
+                const yesPrice = watch('yesPrice');
+                const monthsToHedge = watch('monthsToHedge');
+                const feeRate = watch('feeRate');
                 
-                // Update the form value
-                setValue('hedgeCoverage', optimal.optimalRatio * 100);
+                if (!baselineExpense || !adverseExpense || !yesPrice || !monthsToHedge || feeRate === undefined) {
+                  alert('Please fill in all required fields first');
+                  return;
+                }
                 
-                // Show comprehensive results
-                const resultMessage = `🎯 Optimal Hedge Ratio: ${(optimal.optimalRatio * 100).toFixed(0)}%
+                if (adverseExpense <= baselineExpense) {
+                  alert('Adverse expense must be higher than baseline expense');
+                  return;
+                }
+                
+                setIsOptimizing(true);
+                
+                // Use setTimeout to allow UI to update
+                setTimeout(() => {
+                  try {
+                    const optimal = findOptimalHedgeRatio(
+                      baselineExpense,
+                      adverseExpense,
+                      yesPrice,
+                      monthsToHedge,
+                      feeRate / 100 // Convert percentage to decimal
+                    );
+                    
+                    // Update the form value
+                    setValue('hedgeCoverage', optimal.optimalRatio * 100);
+                    
+                    // Show comprehensive results
+                    const resultMessage = `🎯 Optimal Hedge Ratio: ${(optimal.optimalRatio * 100).toFixed(0)}%
 
 �️ Risk Protection Benefits:
 • Worst-case improvement: $${optimal.worstCaseImprovement.toFixed(2)}
@@ -288,29 +314,58 @@ export function ExpenseForm({ onSubmit }: ExpenseFormProps) {
 • Risk-adjusted return: ${optimal.sharpeRatio.toFixed(3)}
 
 💡 Remember: Hedging is insurance, not investment. Focus on the downside protection!`;
-                
-                alert(resultMessage);
-              } catch (error) {
-                alert('Error optimizing hedge ratio. Please check your inputs.');
-                console.error('Optimization error:', error);
-              } finally {
-                setIsOptimizing(false);
-              }
-            }, 10);
-          }}
-          disabled={isOptimizing}
-          className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 text-white py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition duration-200 font-medium disabled:cursor-not-allowed"
-        >
-          {isOptimizing ? 'Optimizing for Risk Reduction...' : '🎯 Optimize for Risk Protection'}
-        </button>
+                    
+                    alert(resultMessage);
+                  } catch (error) {
+                    alert('Error optimizing hedge ratio. Please check your inputs.');
+                    console.error('Optimization error:', error);
+                  } finally {
+                    setIsOptimizing(false);
+                  }
+                }, 10);
+              }}
+              disabled={isOptimizing}
+              className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 text-white py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition duration-200 font-medium disabled:cursor-not-allowed shadow-lg"
+            >
+              {isOptimizing ? (
+                <span className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Optimizing for Risk Reduction...
+                </span>
+              ) : (
+                '🎯 Optimize for Risk Protection'
+              )}
+            </button>
+          </div>
 
-        {/* Submit Button */}
-        <button
-          type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition duration-200 font-medium"
-        >
-          Simulate Hedging
-        </button>
+          {/* Step 2: Submit Button */}
+          <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 mr-2">
+                  STEP 2
+                </span>
+                <span className="font-medium text-gray-900 dark:text-gray-100">Run Simulation</span>
+              </div>
+              {hedgeCoverage && (
+                <div className="text-blue-600 dark:text-blue-400 text-sm">
+                  Current: {hedgeCoverage.toFixed(0)}% hedge
+                </div>
+              )}
+            </div>
+            
+            {/* Submit Button */}
+            <button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition duration-200 font-medium shadow-lg"
+            >
+              📊 Simulate Hedging
+            </button>
+          </div>
+        </div>
       </form>
     </div>
   );
