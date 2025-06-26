@@ -45,11 +45,13 @@ export default function Home() {
             <div className="flex items-start space-x-3">
               <div className="text-2xl">🎯</div>
               <div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">Recommended Workflow</h3>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-3">Simple Two-Step Process</h3>
                 <div className="space-y-2 text-gray-700 dark:text-gray-300">
                   <p className="flex items-center"><span className="font-semibold text-blue-600 dark:text-blue-400 mr-2">1.</span> Fill in your expense details and market parameters</p>
-                  <p className="flex items-center"><span className="font-semibold text-green-600 dark:text-green-400 mr-2">2.</span> Click &quot;Optimize for Risk Protection&quot; to find the ideal hedge percentage</p>
-                  <p className="flex items-center"><span className="font-semibold text-purple-600 dark:text-purple-400 mr-2">3.</span> Review the optimized settings and click &quot;Simulate Hedging&quot; to see results</p>
+                  <p className="flex items-center"><span className="font-semibold text-green-600 dark:text-green-400 mr-2">2.</span> Click &quot;Analyze Protection Strategy&quot; for comprehensive results</p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-2 ml-6">
+                    <em>Advanced users can access optimization tools in the Advanced Options section</em>
+                  </p>
                 </div>
               </div>
             </div>
@@ -75,7 +77,7 @@ export default function Home() {
           </div>
 
           {/* Detailed Steps */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-blue-50 dark:bg-blue-950 p-6 rounded-lg border border-blue-200 dark:border-blue-800">
               <div className="w-12 h-12 bg-blue-600 dark:bg-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-white font-bold text-lg">1</span>
@@ -93,25 +95,25 @@ export default function Home() {
               <div className="w-12 h-12 bg-green-600 dark:bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-white font-bold text-lg">2</span>
               </div>
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3 text-center">Optimize Protection</h3>
+              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3 text-center">Get Maximum Protection</h3>
               <div className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-                <p>• Click <strong>&quot;Optimize for Risk Protection&quot;</strong> button</p>
-                <p>• Algorithm analyzes 1,000+ scenarios to find optimal hedge ratio</p>
-                <p>• Focuses on <strong>downside protection</strong> and volatility reduction</p>
-                <p>• Automatically updates your hedge coverage percentage</p>
+                <p>• Click <strong>&quot;Analyze Protection Strategy&quot;</strong> for comprehensive analysis</p>
+                <p>• Defaults to 100% coverage for maximum protection</p>
+                <p>• Runs 5,000 Monte Carlo simulations</p>
+                <p>• Shows detailed risk reduction metrics</p>
               </div>
             </div>
-            
-            <div className="bg-purple-50 dark:bg-purple-950 p-6 rounded-lg border border-purple-200 dark:border-purple-800">
-              <div className="w-12 h-12 bg-purple-600 dark:bg-purple-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                <span className="text-white font-bold text-lg">3</span>
-              </div>
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-3 text-center">Run Simulation</h3>
-              <div className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
-                <p>• Click <strong>&quot;Simulate Hedging&quot;</strong> to run Monte Carlo analysis</p>
-                <p>• 5,000 simulations show outcome distributions</p>
-                <p>• Compare hedged vs. unhedged scenarios</p>
-                <p>• Get detailed risk protection metrics</p>
+          </div>
+
+          {/* Advanced Features Note */}
+          <div className="mt-6 bg-purple-50 dark:bg-purple-950 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+            <div className="flex items-start space-x-3">
+              <div className="text-lg">🔧</div>
+              <div>
+                <h4 className="font-semibold text-purple-900 dark:text-purple-100 mb-2">Advanced Features</h4>
+                <p className="text-sm text-purple-800 dark:text-purple-200">
+                  Power users can access <strong>Advanced Options</strong> in the form to fine-tune coverage ratios and use AI-powered optimization to find cost-efficient protection strategies.
+                </p>
               </div>
             </div>
           </div>
@@ -189,8 +191,8 @@ export default function Home() {
                   <div className="text-6xl mb-4" role="img" aria-label="Chart icon">
                     📊
                   </div>
-                  <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">Ready to Simulate</h3>
-                  <p>Fill out the form and click &quot;Simulate Hedging&quot; to see your results.</p>
+                  <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">Ready to Analyze</h3>
+                  <p>Fill out the form and click &quot;Analyze Protection Strategy&quot; to see your results.</p>
                 </div>
               </div>
             )}
