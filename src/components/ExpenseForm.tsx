@@ -50,13 +50,13 @@ export function ExpenseForm({ onSubmit }: ExpenseFormProps) {
     : 0;
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold mb-6 text-gray-900">🎯 Configure Your Hedge</h2>
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+      <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-gray-100">🎯 Configure Your Hedge</h2>
       
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Expense Name */}
         <div>
-          <label htmlFor="expenseName" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="expenseName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Expense Name
           </label>
           <input
@@ -64,16 +64,16 @@ export function ExpenseForm({ onSubmit }: ExpenseFormProps) {
             type="text"
             placeholder="e.g., Gas, Groceries, etc."
             {...register('expenseName', { required: 'Expense name is required' })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           {errors.expenseName && (
-            <p className="text-red-500 text-sm mt-1">{errors.expenseName.message}</p>
+            <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.expenseName.message}</p>
           )}
         </div>
 
         {/* Baseline Monthly Expense */}
         <div>
-          <label htmlFor="baselineExpense" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="baselineExpense" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Baseline Monthly Expense ($)
           </label>
           <input
@@ -87,20 +87,20 @@ export function ExpenseForm({ onSubmit }: ExpenseFormProps) {
               valueAsNumber: true,
               min: { value: 0.01, message: 'Must be greater than 0' }
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           {errors.baselineExpense && (
-            <p className="text-red-500 text-sm mt-1">{errors.baselineExpense.message}</p>
+            <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.baselineExpense.message}</p>
           )}
-          <p className="text-xs text-gray-500 mt-1">Your typical monthly expense when the event doesn&apos;t occur</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Your typical monthly expense when the event doesn&apos;t occur</p>
         </div>
 
         {/* Adverse Monthly Expense */}
         <div>
-          <label htmlFor="adverseExpense" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="adverseExpense" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Adverse Monthly Expense ($)
             {expenseIncrease > 0 && (
-              <span className="text-red-600 font-normal text-xs ml-2">
+              <span className="text-red-600 dark:text-red-400 font-normal text-xs ml-2">
                 (+{expenseIncrease.toFixed(1)}% increase)
               </span>
             )}
@@ -116,17 +116,17 @@ export function ExpenseForm({ onSubmit }: ExpenseFormProps) {
               valueAsNumber: true,
               min: { value: 0.01, message: 'Must be greater than 0' }
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           {errors.adverseExpense && (
-            <p className="text-red-500 text-sm mt-1">{errors.adverseExpense.message}</p>
+            <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.adverseExpense.message}</p>
           )}
-          <p className="text-xs text-gray-500 mt-1">Your monthly expense when the Polymarket event occurs</p>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Your monthly expense when the Polymarket event occurs</p>
         </div>
 
         {/* Hedge Coverage Slider */}
         <div>
-          <label htmlFor="hedgeCoverage" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="hedgeCoverage" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Hedge Coverage: {hedgeCoverage}%
           </label>
           <input
@@ -135,9 +135,9 @@ export function ExpenseForm({ onSubmit }: ExpenseFormProps) {
             min="0"
             max="100"
             {...register('hedgeCoverage', { valueAsNumber: true })}
-            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+            className="w-full h-2 bg-gray-200 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer"
           />
-          <div className="flex justify-between text-xs text-gray-500 mt-1">
+          <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
             <span>0%</span>
             <span>50%</span>
             <span>100%</span>
@@ -146,7 +146,7 @@ export function ExpenseForm({ onSubmit }: ExpenseFormProps) {
 
         {/* YES Price */}
         <div>
-          <label htmlFor="yesPrice" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="yesPrice" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Polymarket YES Price (0.01 - 0.99)
           </label>
           <input
@@ -162,16 +162,16 @@ export function ExpenseForm({ onSubmit }: ExpenseFormProps) {
               min: { value: 0.01, message: 'Must be at least 0.01' },
               max: { value: 0.99, message: 'Must be less than 1.00' }
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           {errors.yesPrice && (
-            <p className="text-red-500 text-sm mt-1">{errors.yesPrice.message}</p>
+            <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.yesPrice.message}</p>
           )}
         </div>
 
         {/* Fee Rate */}
         <div>
-          <label htmlFor="feeRate" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="feeRate" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Polymarket Fee (%)
           </label>
           <input
@@ -187,16 +187,16 @@ export function ExpenseForm({ onSubmit }: ExpenseFormProps) {
               min: { value: 0, message: 'Fee cannot be negative' },
               max: { value: 10, message: 'Fee must be less than 10%' }
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           {errors.feeRate && (
-            <p className="text-red-500 text-sm mt-1">{errors.feeRate.message}</p>
+            <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.feeRate.message}</p>
           )}
         </div>
 
         {/* Months to Hedge */}
         <div>
-          <label htmlFor="monthsToHedge" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="monthsToHedge" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Months to Hedge (1-24)
           </label>
           <input
@@ -210,16 +210,16 @@ export function ExpenseForm({ onSubmit }: ExpenseFormProps) {
               min: { value: 1, message: 'Must be at least 1 month' },
               max: { value: 24, message: 'Must be no more than 24 months' }
             })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
           {errors.monthsToHedge && (
-            <p className="text-red-500 text-sm mt-1">{errors.monthsToHedge.message}</p>
+            <p className="text-red-500 dark:text-red-400 text-sm mt-1">{errors.monthsToHedge.message}</p>
           )}
         </div>
 
         {/* Market ID (Optional) */}
         <div>
-          <label htmlFor="marketId" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="marketId" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
             Market ID (optional)
           </label>
           <input
@@ -227,13 +227,13 @@ export function ExpenseForm({ onSubmit }: ExpenseFormProps) {
             type="text"
             placeholder="Polymarket market ID for deep-link"
             {...register('marketId')}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
 
         {/* Optimization Help Text */}
-        <div className="bg-blue-50 p-3 rounded-md border border-blue-200">
-          <p className="text-sm text-blue-800">
+        <div className="bg-blue-50 dark:bg-blue-950 p-3 rounded-md border border-blue-200 dark:border-blue-800">
+          <p className="text-sm text-blue-800 dark:text-blue-200">
             💡 <strong>Risk-Optimized Hedging:</strong> The optimizer finds the hedge ratio that maximizes protection against worst-case scenarios and reduces volatility, rather than just trying to win more often than not.
           </p>
         </div>
@@ -299,7 +299,7 @@ export function ExpenseForm({ onSubmit }: ExpenseFormProps) {
             }, 10);
           }}
           disabled={isOptimizing}
-          className="w-full bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition duration-200 font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="w-full bg-green-600 hover:bg-green-700 disabled:bg-gray-400 dark:disabled:bg-gray-600 text-white py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition duration-200 font-medium disabled:cursor-not-allowed"
         >
           {isOptimizing ? 'Optimizing for Risk Reduction...' : '🎯 Optimize for Risk Protection'}
         </button>
@@ -307,7 +307,7 @@ export function ExpenseForm({ onSubmit }: ExpenseFormProps) {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 font-medium"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800 transition duration-200 font-medium"
         >
           Simulate Hedging
         </button>
