@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🛡️ Hedge Anything
 
-## Getting Started
+**A sophisticated financial tool for hedging everyday expense volatility using Polymarket prediction markets.**
 
-First, run the development server:
+Transform unpredictable costs into manageable risks with precise hedging calculations, Monte Carlo simulations, and risk-optimized strategies.
+
+## Features
+
+- **Precise Hedging Calculator** - Calculate exact Polymarket positions for expense protection
+- **Monte Carlo Risk Engine** - 5,000+ simulation runs with comprehensive risk metrics  
+- **Intelligent Optimization** - AI-powered hedge ratio optimization for maximum downside protection
+- **Advanced Analytics** - VaR, volatility reduction, Sharpe ratios, and comparative analysis
+- **Educational Framework** - Learn proper hedging mindset (insurance vs speculation)
+
+## Quick Start
 
 ```bash
+# Install and run
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Open http://localhost:3000
+
+# Test
+npm test
+
+# Build
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## How It Works
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. **Configure Your Scenario** - Enter baseline vs adverse expense amounts
+2. **Set Market Parameters** - Input Polymarket YES price and desired hedge coverage
+3. **Analyze Risk Profile** - View Monte Carlo simulations and optimization results
+4. **Execute Strategy** - Get precise share calculations and Polymarket deep-links
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Example Use Case
 
-## Learn More
+**Gas Price Hedging**: Normally spend $150/month, but could spend $300 if oil spikes. Use Polymarket contract "Oil >$80 by Dec 2024" at 25¢ to hedge 80% of the $150 additional risk over 12 months.
 
-To learn more about Next.js, take a look at the following resources:
+**Result**: Buy ~121 shares for ~$30 premium, reducing worst-case from -$300 to -$208/month.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Technology
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Next.js 15** with TypeScript and App Router
+- **Tailwind CSS** for styling
+- **Recharts** for visualizations
+- **React Hook Form** with Zod validation
+- **Vitest** for comprehensive testing
 
-## Deploy on Vercel
+## Mathematical Foundation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Uses modern portfolio theory with behavioral finance insights:
+- Risk-optimized hedge ratios (70% downside protection, 20% volatility, 10% drawdown)
+- Bernoulli trial modeling for event probabilities
+- Linear interpolation for precise percentile calculations
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Deployment
+
+Optimized for Vercel deployment. Push to GitHub and connect to Vercel for automatic deployment.
+
+## Contributing
+
+1. Fork the repo
+2. Create feature branch
+3. Add tests for new functionality
+4. Ensure `npm test` passes
+5. Submit pull request
+
+## License
+
+MIT License - Built with ❤️ for the DeFi community.
