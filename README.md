@@ -15,7 +15,7 @@ Transform unpredictable costs into manageable risks with precise hedging calcula
 ## Quick Start
 
 ```bash
-# Install and run
+# Install and run locally
 npm install
 npm run dev
 # Open http://localhost:3000
@@ -23,8 +23,28 @@ npm run dev
 # Test
 npm test
 
-# Build
+# Build for production
 npm run build
+```
+
+## 🚀 Deployment
+
+This app is configured for **AWS Amplify** hosting with automatic deployments on every GitHub push.
+
+### Deployment Pipeline
+
+- **Platform**: AWS Amplify (static hosting)
+- **Build**: Automatic via `amplify.yml` configuration
+- **Auto-deploy**: ✅ Enabled on `main` branch pushes
+
+### Local Static Build
+
+```bash
+# Generate static files (same as Amplify build)
+npm run build
+
+# Output directory: out/
+# Contains: index.html, _next/, static assets
 ```
 
 ## How It Works
@@ -40,33 +60,76 @@ npm run build
 
 **Result**: Buy ~121 shares for ~$30 premium, reducing worst-case from -$300 to -$208/month.
 
-## Technology
+## Technology Stack
 
 - **Next.js 15** with TypeScript and App Router
 - **Tailwind CSS** for styling
 - **Recharts** for visualizations
 - **React Hook Form** with Zod validation
 - **Vitest** for comprehensive testing
+- **AWS Amplify** for hosting and CI/CD
+
+## Architecture & Optimization
+
+### Performance Features
+
+- **Static Export**: Full client-side rendering for maximum performance
+- **Tree Shaking**: Optimized bundle splitting (~121KB total JS)
+- **TypeScript**: Full type safety across calculation engine
+- **Monte Carlo Engine**: Efficient simulation algorithms with statistical analysis
+
+### Risk Calculation Engine
+
+- **Hedging Mathematics**: Precise share calculations with fee modeling
+- **Statistical Analysis**: VaR, Sharpe ratios, volatility metrics
+- **Optimization Algorithms**: Multi-objective risk minimization
+
+  - Risk-optimized hedge ratios (70% downside protection, 20% volatility, 10% drawdown)
+
+- **Scenario Modeling**: 5,000+ Monte Carlo simulations per analysis
+
+## Contributing
+
+```bash
+# Development setup
+git clone <repository-url>
+cd hedge-anything
+npm install
+
+# Run tests
+npm test
+
+# Start development server  
+npm run dev
+```
 
 ## Mathematical Foundation
 
 Uses modern portfolio theory with behavioral finance insights:
+
 - Risk-optimized hedge ratios (70% downside protection, 20% volatility, 10% drawdown)
-- Bernoulli trial modeling for event probabilities
+- Bernoulli trial modeling for event probabilities  
 - Linear interpolation for precise percentile calculations
 
-## Deployment
+## Development
 
-Optimized for Vercel deployment. Push to GitHub and connect to Vercel for automatic deployment.
+```bash
+# Development setup
+git clone <repository-url>
+cd hedge-anything
+npm install
 
-## Contributing
+# Run tests
+npm test
 
-1. Fork the repo
-2. Create feature branch
-3. Add tests for new functionality
-4. Ensure `npm test` passes
-5. Submit pull request
+# Start development server  
+npm run dev
+```
 
 ## License
 
 MIT License - Built with ❤️ for the DeFi community.
+
+---
+
+**⚠️ Disclaimer**: This tool is for educational purposes. Polymarket involves financial risk. Past performance doesn't predict future results. Always consult financial advisors for investment decisions.
