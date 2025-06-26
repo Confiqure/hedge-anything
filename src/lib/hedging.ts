@@ -19,6 +19,15 @@ export interface ComparisonResults {
   unhedged: number[];
 }
 
+export interface EmotionalHedgingCalculation {
+  shares: number;
+  premium: number;
+  outcomeIfTeamWins: number; // Net cost when team wins (just premium)
+  outcomeIfTeamLoses: number; // Net outcome when team loses (consolation - premium)
+  unhedgedOutcomeIfTeamWins: number; // Just the ticket cost
+  unhedgedOutcomeIfTeamLoses: number; // Just the ticket cost (no consolation)
+}
+
 /**
  * Calculate hedging parameters for realistic expense scenarios
  * 
@@ -281,5 +290,143 @@ export function findOptimalHedgeRatio(
     optimalRatio: bestRatio,
     riskScore: bestRiskScore,
     ...bestMetrics
+  };
+}
+
+/**
+ * Calculate emotional hedging for sports or single events
+ * 
+ * @param ticketCost - Cost of tickets/entry regardless of outcome
+ * @param desiredConsolation - Total amount desired if team loses
+ * @param hedgeRatio - Percentage of consolation to hedge (0-1)
+ * @param teamLossProbability - Probability team loses (0-1)
+ * @param feeRate - Polymarket fee rate (default 0.01 = 1%)
+ * @returns Emotional hedging calculation results
+ */
+export function calculateEmotionalHedging(
+  ticketCost: number,
+  desiredConsolation: number,
+  hedgeRatio: number,
+  yesPrice: number, // Market price for YES shares (team loses)
+  feeRate: number = 0.01
+): EmotionalHedgingCalculation {
+  // Calculate the payout after fees
+  const payout = 1 - feeRate;
+  
+  // Calculate how much consolation we want to hedge (applied to desired consolation amount)
+  const targetConsolation = desiredConsolation * hedgeRatio;
+  
+  // Calculate shares needed to get target consolation when team loses
+  const shares = targetConsolation / payout;
+  
+  // Calculate up-front premium: shares * market price for YES shares
+  const premium = shares * yesPrice;
+  
+  // Calculate outcomes
+  const outcomeIfTeamWins = -ticketCost - premium; // Lost ticket cost and premium, but team won!
+  const outcomeIfTeamLoses = -ticketCost + (shares * payout) - premium; // Lost ticket but got consolation payout minus premium
+  const unhedgedOutcomeIfTeamWins = -ticketCost; // Just paid for tickets
+  const unhedgedOutcomeIfTeamLoses = -ticketCost; // Paid for tickets, team lost, no consolation
+  
+  return {
+    shares,
+    premium,
+    outcomeIfTeamWins,
+    outcomeIfTeamLoses,
+    unhedgedOutcomeIfTeamWins,
+    unhedgedOutcomeIfTeamLoses,
+  };
+}
+
+/**
+ * Find optimal hedge ratio for emotional hedging
+ * Focuses on maximizing emotional protection while minimizing cost
+ */
+export function findOptimalEmotionalHedgeRatio(
+  ticketCost: number,
+  desiredConsolation: number,
+  yesPrice: number, // Market price for YES shares (team loses)
+  feeRate: number = 0.01
+): {
+  optimalRatio: number;
+  worstCaseImprovement: number;
+  volatilityReduction: number;
+  maxDrawdownReduction: number;
+  riskScore: number;
+  winPercentage: number;
+  sharpeRatio: number;
+} {
+  let bestRatio = 0.5;
+  let bestScore = -Infinity;
+  let bestMetrics = {
+    worstCaseImprovement: 0,
+    volatilityReduction: 0,
+    maxDrawdownReduction: 0,
+    winPercentage: 0,
+    sharpeRatio: 0,
+  };
+
+  // Derive team loss probability from market price (approximately)
+  const teamLossProbability = yesPrice;
+
+  // Test different hedge ratios
+  for (let ratio = 0.1; ratio <= 1.0; ratio += 0.05) {
+    const hedging = calculateEmotionalHedging(ticketCost, desiredConsolation, ratio, yesPrice, feeRate);
+    
+    // Simulate outcomes
+    const numSims = 1000;
+    const hedgedOutcomes: number[] = [];
+    const unhedgedOutcomes: number[] = [];
+    
+    for (let i = 0; i < numSims; i++) {
+      const teamLoses = Math.random() < teamLossProbability;
+      
+      if (teamLoses) {
+        hedgedOutcomes.push(hedging.outcomeIfTeamLoses);
+        unhedgedOutcomes.push(hedging.unhedgedOutcomeIfTeamLoses);
+      } else {
+        hedgedOutcomes.push(hedging.outcomeIfTeamWins);
+        unhedgedOutcomes.push(hedging.unhedgedOutcomeIfTeamWins);
+      }
+    }
+    
+    const hedgedStats = calculateStats(hedgedOutcomes);
+    const unhedgedStats = calculateStats(unhedgedOutcomes);
+    
+    // Calculate metrics
+    const worstCaseImprovement = hedgedStats.worstCase10 - unhedgedStats.worstCase10;
+    const hedgedStdDev = Math.sqrt(hedgedOutcomes.reduce((sum, v) => sum + Math.pow(v - hedgedStats.mean, 2), 0) / hedgedOutcomes.length);
+    const unhedgedStdDev = Math.sqrt(unhedgedOutcomes.reduce((sum, v) => sum + Math.pow(v - unhedgedStats.mean, 2), 0) / unhedgedOutcomes.length);
+    const volatilityReduction = Math.max(0, ((unhedgedStdDev - hedgedStdDev) / unhedgedStdDev) * 100);
+    
+    const winPercentage = (hedgedOutcomes.filter((h, i) => h > unhedgedOutcomes[i]).length / hedgedOutcomes.length) * 100;
+    const maxDrawdownReduction = Math.max(0, Math.abs(unhedgedStats.worstCase10) - Math.abs(hedgedStats.worstCase10));
+    const sharpeRatio = hedgedStats.mean / (hedgedStdDev || 1);
+    
+    // Scoring function that prioritizes emotional protection over profit
+    const riskScore = (
+      worstCaseImprovement * 0.4 +      // 40% weight on worst-case protection
+      volatilityReduction * 0.3 +       // 30% weight on volatility reduction  
+      maxDrawdownReduction * 0.2 +      // 20% weight on drawdown protection
+      (sharpeRatio * 10) * 0.1          // 10% weight on risk-adjusted returns
+    ) - (hedging.premium * 0.1);        // Small penalty for premium cost
+    
+    if (riskScore > bestScore) {
+      bestScore = riskScore;
+      bestRatio = ratio;
+      bestMetrics = {
+        worstCaseImprovement,
+        volatilityReduction,
+        maxDrawdownReduction,
+        winPercentage,
+        sharpeRatio,
+      };
+    }
+  }
+
+  return {
+    optimalRatio: bestRatio,
+    riskScore: bestScore,
+    ...bestMetrics,
   };
 }

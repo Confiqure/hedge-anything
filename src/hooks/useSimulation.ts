@@ -1,8 +1,9 @@
 import { useMemo } from 'react';
-import { calculateHedging, runComparisonSimulation } from '@/lib/hedging';
+import { calculateHedging, runComparisonSimulation, calculateEmotionalHedging } from '@/lib/hedging';
 import { calculateStats, SimulationStats } from '@/lib/stats';
 
 export interface SimulationResults {
+  hedgeMode: 'expense' | 'emotion';
   hedging: {
     shares: number;
     premium: number;
@@ -31,81 +32,174 @@ export function useSimulation(
   hedgeRatio: number,
   yesPrice: number,
   months: number,
-  feeRate: number = 0.01
+  feeRate: number = 0.01,
+  hedgeMode: 'expense' | 'emotion' = 'expense'
 ): SimulationResults | null {
   return useMemo(() => {
     // Validate inputs
     if (!baselineExpense || baselineExpense <= 0 || 
         !adverseExpense || adverseExpense <= 0 ||
-        adverseExpense <= baselineExpense || // Adverse must be higher than baseline
         !hedgeRatio || hedgeRatio < 0 || hedgeRatio > 1 ||
         !yesPrice || yesPrice <= 0 || yesPrice >= 1 ||
         !months || months <= 0) {
       return null;
     }
 
-    // Calculate basic hedging parameters
-    const hedging = calculateHedging(baselineExpense, adverseExpense, hedgeRatio, yesPrice, feeRate);
-    
-    // Run comparison simulation
-    const { hedged, unhedged } = runComparisonSimulation(baselineExpense, adverseExpense, hedgeRatio, yesPrice, months, feeRate);
-    
-    // Calculate statistics for both scenarios
-    const hedgedStats = calculateStats(hedged);
-    const unhedgedStats = calculateStats(unhedged);
+    if (hedgeMode === 'expense') {
+      // Expense hedging validation
+      if (adverseExpense <= baselineExpense) {
+        return null;
+      }
+      
+      // Calculate basic hedging parameters
+      const hedging = calculateHedging(baselineExpense, adverseExpense, hedgeRatio, yesPrice, feeRate);
+      
+      // Run comparison simulation
+      const { hedged, unhedged } = runComparisonSimulation(
+        baselineExpense,
+        adverseExpense,
+        hedgeRatio,
+        yesPrice,
+        months,
+        feeRate
+      );
 
-    // Calculate comparison metrics
-    const hedgedBetterCount = hedged.filter((h, i) => h > unhedged[i]).length;
-    const hedgedBetter = hedgedBetterCount / hedged.length;
-    
-    const improvements = hedged.map((h, i) => h - unhedged[i]);
-    const averageImprovement = improvements.reduce((sum, imp) => sum + imp, 0) / improvements.length;
-    
-    // Calculate worst-case improvement
-    const worstCaseImprovement = hedgedStats.worstCase10 - unhedgedStats.worstCase10;
+      // Calculate statistics for both scenarios
+      const hedgedStats = calculateStats(hedged);
+      const unhedgedStats = calculateStats(unhedged);
 
-    // Create combined histogram bins for visualization
-    const allResults = [...hedged, ...unhedged];
-    const min = Math.min(...allResults);
-    const max = Math.max(...allResults);
-    const binCount = 20;
-    const binSize = (max - min) / binCount;
-    
-    const bins = Array.from({ length: binCount }, (_, i) => {
-      const binStart = min + i * binSize;
-      const binEnd = min + (i + 1) * binSize;
+      // Calculate comparison metrics
+      let hedgedBetter = 0;
+      let totalImprovement = 0;
       
-      const hedgedCount = hedged.filter(result => {
-        if (i === binCount - 1) {
-          return result >= binStart && result <= binEnd;
+      for (let i = 0; i < hedged.length; i++) {
+        if (hedged[i] > unhedged[i]) {
+          hedgedBetter++;
         }
-        return result >= binStart && result < binEnd;
-      }).length;
-      
-      const unhedgedCount = unhedged.filter(result => {
-        if (i === binCount - 1) {
-          return result >= binStart && result <= binEnd;
-        }
-        return result >= binStart && result < binEnd;
-      }).length;
-      
+        totalImprovement += hedged[i] - unhedged[i];
+      }
+
+      const hedgedBetterPercent = hedgedBetter / hedged.length;
+      const averageImprovement = totalImprovement / hedged.length;
+      const worstCaseImprovement = hedgedStats.worstCase10 - unhedgedStats.worstCase10;
+
+      // Create histogram
+      const allValues = [...hedged, ...unhedged];
+      const min = Math.min(...allValues);
+      const max = Math.max(...allValues);
+      const binCount = 20;
+      const binSize = (max - min) / binCount;
+
+      const histogram = [];
+      for (let i = 0; i < binCount; i++) {
+        const binStart = min + i * binSize;
+        const binEnd = binStart + binSize;
+        const binLabel = binStart.toFixed(0);
+        
+        const hedgedCount = hedged.filter(v => v >= binStart && v < binEnd).length;
+        const unhedgedCount = unhedged.filter(v => v >= binStart && v < binEnd).length;
+        
+        histogram.push({
+          bin: binLabel,
+          hedgedCount,
+          unhedgedCount
+        });
+      }
+
       return {
-        bin: Math.round(binStart).toString(),
-        hedgedCount,
-        unhedgedCount,
+        hedgeMode: 'expense',
+        hedging: {
+          shares: hedging.shares,
+          premium: hedging.premium,
+          hedgedOutcomeIfEventTrue: hedging.hedgedOutcomeIfEventTrue,
+          hedgedOutcomeIfEventFalse: hedging.hedgedOutcomeIfEventFalse,
+          unhedgedOutcomeIfEventTrue: hedging.unhedgedOutcomeIfEventTrue,
+          unhedgedOutcomeIfEventFalse: hedging.unhedgedOutcomeIfEventFalse,
+        },
+        hedgedStats,
+        unhedgedStats,
+        comparison: {
+          hedgedBetter: hedgedBetterPercent,
+          averageImprovement,
+          worstCaseImprovement,
+        },
+        histogram,
       };
-    });
+    } else {
+      // Emotional hedging - single event simulation
+      const emotionalHedging = calculateEmotionalHedging(baselineExpense, adverseExpense, hedgeRatio, yesPrice, feeRate);
+      
+      // For emotional hedging, simulate binary outcomes (team wins/loses)
+      const numSimulations = 5000;
+      const hedged: number[] = [];
+      const unhedged: number[] = [];
+      
+      for (let i = 0; i < numSimulations; i++) {
+        const teamLoses = Math.random() < yesPrice; // yesPrice = probability team loses
+        
+        if (teamLoses) {
+          // Team loses = YES wins = consolation payout
+          hedged.push(emotionalHedging.outcomeIfTeamLoses);
+          unhedged.push(emotionalHedging.unhedgedOutcomeIfTeamLoses);
+        } else {
+          // Team wins = NO wins = just lost premium
+          hedged.push(emotionalHedging.outcomeIfTeamWins);
+          unhedged.push(emotionalHedging.unhedgedOutcomeIfTeamWins);
+        }
+      }
 
-    return {
-      hedging,
-      hedgedStats,
-      unhedgedStats,
-      comparison: {
-        hedgedBetter,
-        averageImprovement,
-        worstCaseImprovement,
-      },
-      histogram: bins,
-    };
-  }, [baselineExpense, adverseExpense, hedgeRatio, yesPrice, months, feeRate]);
+      // Calculate statistics
+      const hedgedStats = calculateStats(hedged);
+      const unhedgedStats = calculateStats(unhedged);
+
+      // Calculate comparison metrics
+      let hedgedBetter = 0;
+      let totalImprovement = 0;
+      
+      for (let i = 0; i < hedged.length; i++) {
+        if (hedged[i] > unhedged[i]) {
+          hedgedBetter++;
+        }
+        totalImprovement += hedged[i] - unhedged[i];
+      }
+
+      const hedgedBetterPercent = hedgedBetter / hedged.length;
+      const averageImprovement = totalImprovement / hedged.length;
+      const worstCaseImprovement = hedgedStats.worstCase10 - unhedgedStats.worstCase10;
+
+      // Create simple histogram for binary outcomes
+      const histogram = [
+        {
+          bin: 'Team Wins',
+          hedgedCount: hedged.filter(v => v === emotionalHedging.outcomeIfTeamWins).length,
+          unhedgedCount: unhedged.filter(v => v === emotionalHedging.unhedgedOutcomeIfTeamWins).length,
+        },
+        {
+          bin: 'Team Loses',
+          hedgedCount: hedged.filter(v => v === emotionalHedging.outcomeIfTeamLoses).length,
+          unhedgedCount: unhedged.filter(v => v === emotionalHedging.unhedgedOutcomeIfTeamLoses).length,
+        }
+      ];
+
+      return {
+        hedgeMode: 'emotion',
+        hedging: {
+          shares: emotionalHedging.shares,
+          premium: emotionalHedging.premium,
+          hedgedOutcomeIfEventTrue: emotionalHedging.outcomeIfTeamLoses, // "Your Team Loses (YES wins)" = consolation
+          hedgedOutcomeIfEventFalse: emotionalHedging.outcomeIfTeamWins, // "Your Team Wins (NO wins)" = just premium loss
+          unhedgedOutcomeIfEventTrue: emotionalHedging.unhedgedOutcomeIfTeamLoses,
+          unhedgedOutcomeIfEventFalse: emotionalHedging.unhedgedOutcomeIfTeamWins,
+        },
+        hedgedStats,
+        unhedgedStats,
+        comparison: {
+          hedgedBetter: hedgedBetterPercent,
+          averageImprovement,
+          worstCaseImprovement,
+        },
+        histogram,
+      };
+    }
+  }, [baselineExpense, adverseExpense, hedgeRatio, yesPrice, months, feeRate, hedgeMode]);
 }

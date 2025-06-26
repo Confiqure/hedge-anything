@@ -13,8 +13,9 @@ export default function Home() {
     formData?.adverseExpense || 0,
     (formData?.hedgeCoverage || 0) / 100,
     formData?.yesPrice || 0,
-    formData?.monthsToHedge || 0,
-    (formData?.feeRate || 1) / 100
+    formData?.monthsToHedge || 1,
+    (formData?.feeRate || 1) / 100,
+    formData?.hedgeMode || 'expense'
   );
 
   const handleFormSubmit = (data: FormData) => {
@@ -180,6 +181,7 @@ export default function Home() {
               <Results 
                 results={simulationResults} 
                 marketId={formData.marketId}
+                hedgeMode={formData.hedgeMode}
               />
             ) : (
               <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">

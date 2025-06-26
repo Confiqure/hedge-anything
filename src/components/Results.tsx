@@ -16,9 +16,10 @@ const ResponsiveContainer = dynamic(() => import('recharts').then((mod) => mod.R
 interface ResultsProps {
   results: SimulationResults;
   marketId?: string;
+  hedgeMode?: 'expense' | 'emotion';
 }
 
-export function Results({ results, marketId }: ResultsProps) {
+export function Results({ results, marketId, hedgeMode = 'expense' }: ResultsProps) {
   const [isClient, setIsClient] = useState(false);
   const { hedging, hedgedStats, unhedgedStats, comparison, histogram } = results;
 
@@ -41,7 +42,9 @@ export function Results({ results, marketId }: ResultsProps) {
 
   return (
     <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">📊 Risk Analysis Results</h2>
+      <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+        📊 {hedgeMode === 'emotion' ? 'Emotional Hedging Results' : 'Risk Analysis Results'}
+      </h2>
       
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -52,19 +55,27 @@ export function Results({ results, marketId }: ResultsProps) {
         </div>
         
         <div className="bg-green-50 dark:bg-green-950 p-4 rounded-lg">
-          <h3 className="text-lg font-semibold text-green-900 dark:text-green-100 mb-2">Up-front Cost</h3>
+          <h3 className="text-lg font-semibold text-green-900 dark:text-green-100 mb-2">
+            {hedgeMode === 'emotion' ? 'Emotional Insurance Cost' : 'Up-front Cost'}
+          </h3>
           <p className="text-2xl font-bold text-green-600 dark:text-green-300">{formatCurrency(hedging.premium)}</p>
-          <p className="text-sm text-green-700 dark:text-green-200 mt-1">Total premium to pay</p>
+          <p className="text-sm text-green-700 dark:text-green-200 mt-1">
+            {hedgeMode === 'emotion' ? 'Premium for peace of mind' : 'Total premium to pay'}
+          </p>
         </div>
       </div>
 
       {/* Hedged vs Unhedged Comparison */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Hedged vs Unhedged Comparison</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          {hedgeMode === 'emotion' ? 'With vs Without Emotional Protection' : 'Hedged vs Unhedged Comparison'}
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
           {/* Hedged Scenario Stats */}
           <div className="bg-blue-50 dark:bg-blue-950 p-4 rounded-lg">
-            <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-3">With Hedging</h4>
+            <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-3">
+              {hedgeMode === 'emotion' ? 'With Emotional Hedge' : 'With Hedging'}
+            </h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-blue-700 dark:text-blue-200">Mean outcome:</span>
@@ -87,7 +98,9 @@ export function Results({ results, marketId }: ResultsProps) {
 
           {/* Unhedged Scenario Stats */}
           <div className="bg-red-50 dark:bg-red-950 p-4 rounded-lg">
-            <h4 className="font-semibold text-red-900 dark:text-red-100 mb-3">Without Hedging</h4>
+            <h4 className="font-semibold text-red-900 dark:text-red-100 mb-3">
+              {hedgeMode === 'emotion' ? 'Without Emotional Hedge' : 'Without Hedging'}
+            </h4>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-red-700 dark:text-red-200">Mean outcome:</span>
@@ -111,7 +124,9 @@ export function Results({ results, marketId }: ResultsProps) {
 
         {/* Risk Reduction Analysis */}
         <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-950 dark:to-blue-950 p-6 rounded-lg border-2 border-green-200 dark:border-green-700">
-          <h4 className="font-bold text-green-900 dark:text-green-100 mb-4 text-lg">🛡️ Risk Protection Analysis</h4>
+          <h4 className="font-bold text-green-900 dark:text-green-100 mb-4 text-lg">
+            🛡️ {hedgeMode === 'emotion' ? 'Emotional Protection Analysis' : 'Risk Protection Analysis'}
+          </h4>
           
           {/* Primary Risk Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
@@ -165,14 +180,18 @@ export function Results({ results, marketId }: ResultsProps) {
           {/* Educational Note */}
           <div className="mt-4 p-3 bg-blue-100 dark:bg-blue-900 rounded-lg border border-blue-300 dark:border-blue-600">
             <p className="text-sm text-blue-800 dark:text-blue-200">
-              <strong>💡 Remember:</strong> Hedging is insurance, not an investment. The goal is to reduce severe losses, 
-              not to be profitable most of the time. A small average cost is normal and worth paying for significant downside protection.
+              <strong>💡 Remember:</strong> {hedgeMode === 'emotion' 
+                ? 'Emotional hedging is about psychological protection, not profit. You pay a premium for peace of mind when your team loses, getting consolation money to soften the emotional blow.'
+                : 'Hedging is insurance, not an investment. The goal is to reduce severe losses, not to be profitable most of the time. A small average cost is normal and worth paying for significant downside protection.'
+              }
             </p>
           </div>
         </div>
       </div>
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Monthly Outcome Analysis</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          {hedgeMode === 'emotion' ? 'Emotional Outcome Analysis' : 'Monthly Outcome Analysis'}
+        </h3>
         <div className="overflow-x-auto">
           <table className="min-w-full border border-gray-300 dark:border-gray-600 rounded-lg">
             <thead className="bg-gray-50 dark:bg-gray-700">
@@ -181,7 +200,7 @@ export function Results({ results, marketId }: ResultsProps) {
                   Scenario
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-b dark:border-gray-600">
-                  Net Impact
+                  {hedgeMode === 'emotion' ? 'Emotional Impact' : 'Net Impact'}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-b dark:border-gray-600">
                   Description
@@ -191,24 +210,30 @@ export function Results({ results, marketId }: ResultsProps) {
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-600">
               <tr className="hover:bg-gray-50 dark:hover:bg-gray-700">
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                  Event Occurs (YES wins)
+                  {hedgeMode === 'emotion' ? 'Your Team Loses (YES wins)' : 'Event Occurs (YES wins)'}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600 dark:text-red-400">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-green-600 dark:text-green-400">
                   {formatCurrency(hedging.hedgedOutcomeIfEventTrue)}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                  Higher expense offset by share payout
+                  {hedgeMode === 'emotion' 
+                    ? 'Emotional pain softened by consolation payout' 
+                    : 'Higher expense offset by share payout'
+                  }
                 </td>
               </tr>
               <tr className="hover:bg-gray-50 dark:hover:bg-gray-700">
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
-                  Event Does Not Occur (NO wins)
+                  {hedgeMode === 'emotion' ? 'Your Team Wins (NO wins)' : 'Event Does Not Occur (NO wins)'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-red-600 dark:text-red-400">
                   {formatCurrency(hedging.hedgedOutcomeIfEventFalse)}
                 </td>
                 <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-300">
-                  Normal expense, lose premium paid
+                  {hedgeMode === 'emotion' 
+                    ? 'No emotional pain, but lose hedge premium' 
+                    : 'Normal expense, lose premium paid'
+                  }
                 </td>
               </tr>
             </tbody>
@@ -219,7 +244,10 @@ export function Results({ results, marketId }: ResultsProps) {
       {/* Combined Histogram */}
       <div>
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
-          Distribution Comparison (5,000 simulations)
+          {hedgeMode === 'emotion' 
+            ? 'Emotional Outcome Distribution (5,000 simulations)'
+            : 'Distribution Comparison (5,000 simulations)'
+          }
         </h3>
         <div className="h-64 bg-gray-50 dark:bg-gray-800 rounded-lg">
           {isClient ? (
@@ -238,7 +266,9 @@ export function Results({ results, marketId }: ResultsProps) {
                 <Tooltip 
                   formatter={(value, name) => [
                     `${value} simulations`, 
-                    name === 'hedgedCount' ? 'With Hedging' : 'Without Hedging'
+                    name === 'hedgedCount' 
+                      ? (hedgeMode === 'emotion' ? 'With Emotional Hedge' : 'With Hedging')
+                      : (hedgeMode === 'emotion' ? 'Without Emotional Hedge' : 'Without Hedging')
                   ]}
                   labelFormatter={(label) => `Range: ${formatCurrency(Number(label))}`}
                   contentStyle={{
@@ -264,18 +294,20 @@ export function Results({ results, marketId }: ResultsProps) {
         <div className="flex justify-center mt-4 space-x-6 text-sm text-gray-900 dark:text-gray-100">
           <div className="flex items-center">
             <div className="w-4 h-4 bg-blue-500 rounded mr-2"></div>
-            <span>With Hedging</span>
+            <span>{hedgeMode === 'emotion' ? 'With Emotional Hedge' : 'With Hedging'}</span>
           </div>
           <div className="flex items-center">
             <div className="w-4 h-4 bg-red-500 rounded mr-2"></div>
-            <span>Without Hedging</span>
+            <span>{hedgeMode === 'emotion' ? 'Without Emotional Hedge' : 'Without Hedging'}</span>
           </div>
         </div>
       </div>
 
       {/* Summary Statistics - Updated to use hedged stats */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Hedged Scenario Summary</h3>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+          {hedgeMode === 'emotion' ? 'Emotional Hedge Summary' : 'Hedged Scenario Summary'}
+        </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg text-center">
             <p className="text-sm text-gray-600 dark:text-gray-300 mb-1">Mean Outcome</p>
