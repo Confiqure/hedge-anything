@@ -14,11 +14,11 @@ const geistMono = Geist_Mono({
 });
 
 
-// Self-hosted Plausible (analytics.dylanwheeler.net). Both env vars are injected by
+// Self-hosted Umami (analytics.dylanwheeler.net). Both env vars are injected by
 // AWS Amplify (Terraform: monorepo workspace/infrastructure/amplify/apps.tf); the
-// script only renders when the domain is set, so local dev never emits events.
-const plausibleHost = process.env.NEXT_PUBLIC_PLAUSIBLE_HOST ?? "https://analytics.dylanwheeler.net";
-const plausibleDomain = process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN ?? "";
+// script only renders when the website ID is set, so local dev never emits events.
+const umamiHost = process.env.NEXT_PUBLIC_UMAMI_HOST ?? "https://analytics.dylanwheeler.net";
+const umamiWebsiteId = process.env.NEXT_PUBLIC_UMAMI_WEBSITE_ID ?? "";
 
 export const metadata: Metadata = {
   title: "Hedge Anything - Expense Hedging Companion",
@@ -47,11 +47,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {plausibleDomain && (
+        {umamiWebsiteId && (
           <Script
             defer
-            data-domain={plausibleDomain}
-            src={`${plausibleHost}/js/script.file-downloads.hash.outbound-links.pageview-props.tagged-events.js`}
+            data-website-id={umamiWebsiteId}
+            src={`${umamiHost}/script.js`}
           />
         )}
         {children}
