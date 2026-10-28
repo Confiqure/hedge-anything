@@ -2,7 +2,15 @@
   "name": "hedge-anything",
   "version": "0.1.0",
   "description": "Sophisticated expense hedging companion using Polymarket prediction markets with Monte Carlo simulations and risk optimization",
-  "keywords": ["hedging", "polymarket", "risk-management", "monte-carlo", "prediction-markets", "finance", "nextjs"],
+  "keywords": [
+    "hedging",
+    "polymarket",
+    "risk-management",
+    "monte-carlo",
+    "prediction-markets",
+    "finance",
+    "nextjs"
+  ],
   "private": true,
   "type": "module",
   "scripts": {
@@ -14,7 +22,7 @@
     "test:ui": "vitest --ui"
   },
   "dependencies": {
-    "next": "15.3.4",
+    "next": "15.5.28",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.58.1",
@@ -30,10 +38,10 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "15.3.4",
+    "eslint-config-next": "15.5.28",
     "jsdom": "^26.1.0",
     "tailwindcss": "^4",
     "typescript": "^5",
-    "vitest": "^3.2.4"
+    "vitest": "^3.2.7"
   }
 }
